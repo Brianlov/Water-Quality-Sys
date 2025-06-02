@@ -36,7 +36,7 @@ const Sensorboard = () => {
   // 🟢 Fetch from your Node.js backend
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/fetch-data');
+      const response = await fetch('https://idpwaterqualitymonitoring-egabc8esavczf2bz.eastasia-01.azurewebsites.net/fetch-data');
       const json = await response.json();
       console.log(json); // For debugging
       const feeds = json.data || [];
