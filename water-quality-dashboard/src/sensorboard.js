@@ -59,7 +59,7 @@ const Sensorboard = () => {
   // Call fetchData when component mounts and refresh every 15 seconds
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 15000);
+    const interval = setInterval(fetchData, 18000);
     return () => clearInterval(interval);
   }, []);
 
@@ -105,22 +105,22 @@ return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">Temperature</h3>
-        <p className="text-2xl font-bold text-red-500">{temperatureData.at(-1)?.y}°C</p>
+        <p className="text-2xl font-bold text-red-500">{temperatureData.at(-1)}°C</p>
         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
       </div>
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">Turbidity</h3>
-        <p className="text-2xl font-bold text-blue-500">{humidityData.at(-1)?.y} NTU</p>
+        <p className="text-2xl font-bold text-blue-500">{humidityData.at(-1)} NTU</p>
         <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
       </div>
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">TDS</h3>
-        <p className="text-2xl font-bold text-green-600">{oxygenData.at(-1)?.y} ppm</p>
+        <p className="text-2xl font-bold text-green-600">{oxygenData.at(-1)} ppm</p>
         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
       </div>
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">pH</h3>
-        <p className="text-2xl font-bold text-orange-500">{lightData.at(-1)?.y}</p>
+        <p className="text-2xl font-bold text-orange-500">{lightData.at(-1)}</p>
         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
       </div>
     </div>
