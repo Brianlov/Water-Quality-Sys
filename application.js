@@ -27,14 +27,149 @@ telegramBot.onText(/\/start/, (msg) => {
   );
 });
 
-function sendTelegramAlert(sensor, value,channelId) {
+function sendTelegramAlert(level, details, channelId) {
   const chatId = userChannels[channelId];
   if (!chatId) return; // No user registered for this channel
-  const message = `🚨 Alert: ${sensor} value is ${value}, which is above the threshold!`;
-  telegramBot.sendMessage(chatId, message);
+  const now = new Date().toLocaleString();
+  const message = 
+    `🚨 *${level} ALERT* 🚨\n\n` +
+    `*Time:* ${now}\n` +
+    `*Details:*\n\n${details}\n\n` +
+    `Please check your water quality immediately!`;
+  telegramBot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
 }
 
+// Shared function to process feeds, send alerts, and store in MongoDB
+async function processFeeds(feeds, channelId = 2972454) {
+  const dataToInsert = feeds.map(feed => ({
+    temperature: parseFloat(feed.field1),
+    turbidity: parseFloat(feed.field2),
+    tds: parseFloat(feed.field3),
+    ph: parseFloat(feed.field4),
+    timestamp: feed.created_at ? new Date(feed.created_at) : new Date(),
+    channel_id: feed.channel_id || channelId,
+  }));
+  console.log('Data to insert:', dataToInsert);
+
+  const THRESHOLDS = {
+    high_temperature: 30,
+    low_temperature: 10,
+    critical_turbidity: 10,
+    warning_tds: 500,
+    critical_tds: 1000,
+    warning_ph_low: 5.0,
+    warning_ph_high: 10.0,
+    warning_ph_range_low: 6.5,
+    warning_ph_range_high: 8.0
+  };
+
+  dataToInsert.forEach(entry => {
+    let warnings = 0;
+    let critical = false;
+    let messages = [];
+
+    // Temperature
+    if (entry.temperature >= THRESHOLDS.high_temperature) {
+      warnings++;
+      messages.push('Temperature is high\n');
+    }
+    if (entry.temperature < THRESHOLDS.low_temperature) {
+      warnings++;
+      messages.push('Temperature is low\n');
+    }
+
+    // Turbidity
+    if (entry.turbidity >= THRESHOLDS.critical_turbidity) {
+      critical = true;
+      messages.push('Turbidity is CRITICAL\n');
+    } else if (entry.turbidity >= 5) {
+      warnings++;
+      messages.push('Turbidity is high\n');
+    }
+
+    // TDS
+    if (entry.tds >= THRESHOLDS.critical_tds) {
+      critical = true;
+      messages.push('TDS is CRITICAL\n');
+    } else if (entry.tds >= THRESHOLDS.warning_tds) {
+      warnings++;
+      messages.push('TDS is high\n');
+    }
+
+    // pH
+    if (entry.ph < THRESHOLDS.warning_ph_low || entry.ph >= THRESHOLDS.warning_ph_high) {
+      warnings++;
+      messages.push('pH is out of safe range\n');
+    } else if (entry.ph < THRESHOLDS.warning_ph_range_low || entry.ph >= THRESHOLDS.warning_ph_range_high) {
+      warnings++;
+      messages.push('pH is slightly out of optimal range\n');
+    }
+
+    // Send alerts
+    if (critical) {
+      sendTelegramAlert('CRITICAL', messages.join(''), entry.channel_id);
+    } else if (warnings >= 2) {
+      sendTelegramAlert('WARNING', messages.join(''), entry.channel_id);
+    }
+    // else: ignore
+  });
+
+  // Store all data in MongoDB (no duplicate check)
+  const collection = db.collection('date');
+    await collection.insertMany(dataToInsert);
+    
+  
+
+  return dataToInsert;
+}
+
+// GET endpoint: fetch from ThingSpeak
 Approuter.get('/fetch-data', async (req, res) => {
+  // const apiKey = 'CSI9TQECFXYFBE2S';
+  // const channelId = 2972454;
+  // const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
+
+  try {
+     // Get the latest 4 entries, sorted by timestamp descending
+    const collection = db.collection('date');
+    const latestData = await collection.find({})
+      .sort({ timestamp: -1 })
+      .limit(4)
+      .toArray();
+
+    res.json({
+      message: 'Fetched latest processed data from database',
+      count: latestData.length,
+      data: latestData,
+    });
+  } catch (error) {
+    console.error('Error fetching latest data from DB:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST endpoint for debugging with Postman
+Approuter.post('/fetch-data', async (req, res) => {
+  try {
+    const feeds = req.body.feeds;
+    if (!feeds || !Array.isArray(feeds)) {
+      return res.status(400).json({ error: 'feeds must be an array' });
+    }
+    const dataToInsert = await processFeeds(feeds);
+
+    res.json({
+      message: 'Test data processed',
+      count: dataToInsert.length,
+      data: dataToInsert,
+    });
+  } catch (error) {
+    console.error('Error in POST /fetch-data:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Automatic fetch and process every 3 minutes
+async function autoFetchAndProcess() {
   const apiKey = 'CSI9TQECFXYFBE2S';
   const channelId = 2972454;
   const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
@@ -42,58 +177,15 @@ Approuter.get('/fetch-data', async (req, res) => {
   try {
     const response = await axios.get(url);
     const feeds = response.data.feeds;
-
-    const dataToInsert = feeds.map(feed => ({
-      temperature: parseFloat(feed.field1),
-      turbidity: parseFloat(feed.field2),
-      tds: parseFloat(feed.field3),
-      ph: parseFloat(feed.field4),
-      timestamp: new Date(feed.created_at),
-      channel_id: channelId,
-    }));
-    console.log('Data to insert:', dataToInsert);
-
-    // ...existing code...
-
-    //telegram alert thresholds start
-const THRESHOLDS = {
-  temperature: 20, // example threshold
-  turbidity: 5,
-  tds: 1000,
-  ph: 8
-};
-
-dataToInsert.forEach(entry => {
-  if (entry.temperature > THRESHOLDS.temperature) {
-    sendTelegramAlert('Temperature', entry.temperature,entry.channel_id);
-  }
-  if (entry.turbidity > THRESHOLDS.turbidity) {
-    sendTelegramAlert('Turbidity', entry.turbidity,entry.channel_id);
-  }
-  if (entry.tds > THRESHOLDS.tds) {
-    sendTelegramAlert('TDS', entry.tds,entry.channel_id);
-  }
-  if (entry.ph > THRESHOLDS.ph) {
-    sendTelegramAlert('pH', entry.ph,entry.channel_id);
-  }
-});
-
-//telegram alert end
-
-    // Store all data in MongoDB (no duplicate check)
-    const collection = db.collection('date');
-    if (dataToInsert.length > 0) {
-      await collection.insertMany(dataToInsert);
-    }
-
-    // Send the fetched data directly to the frontend
-    res.json({
-      message: 'Fetched, stored, and sent data',
-      count: dataToInsert.length,
-      data: dataToInsert,
-    });
+    await processFeeds(feeds, channelId);
+    console.log(`[Auto Fetch] Data fetched and processed at ${new Date().toLocaleString()}`);
   } catch (error) {
-    console.error('Error fetching ThingSpeak data:', error.message);
-    res.status(500).json({ error: error.message });
+    console.error('[Auto Fetch] Error fetching ThingSpeak data:', error.message);
   }
-});
+}
+
+// Start the interval (every 3 minutes = 180000 ms)
+//setInterval(autoFetchAndProcess, 180000);
+// Optionally, run once at startup
+autoFetchAndProcess();
+
