@@ -8,7 +8,7 @@ function Home() {
 
         {/* Header */}
         <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white p-6 shadow-md rounded-lg mb-6 text-center">
-          <h1 className="text-4xl font-bold mb-1">AI-Enhanced Water Quality Monitoring System</h1>
+          <h1 className="text-4xl font-bold mb-1">Enhanced Water Quality Monitoring System</h1>
           <p className="text-sm opacity-90">
             Built with Node.js, ESP32, Azure, and Machine Learning
           </p>

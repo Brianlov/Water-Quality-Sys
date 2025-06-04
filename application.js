@@ -168,24 +168,24 @@ Approuter.post('/fetch-data', async (req, res) => {
   }
 });
 
-// Automatic fetch and process every 3 minutes
-async function autoFetchAndProcess() {
-  const apiKey = 'CSI9TQECFXYFBE2S';
-  const channelId = 2972454;
-  const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
+// // Automatic fetch and process every 3 minutes
+// async function autoFetchAndProcess() {
+//   const apiKey = 'CSI9TQECFXYFBE2S';
+//   const channelId = 2972454;
+//   const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
 
-  try {
-    const response = await axios.get(url);
-    const feeds = response.data.feeds;
-    await processFeeds(feeds, channelId);
-    console.log(`[Auto Fetch] Data fetched and processed at ${new Date().toLocaleString()}`);
-  } catch (error) {
-    console.error('[Auto Fetch] Error fetching ThingSpeak data:', error.message);
-  }
-}
+//   try {
+//     const response = await axios.get(url);
+//     const feeds = response.data.feeds;
+//     await processFeeds(feeds, channelId);
+//     console.log(`[Auto Fetch] Data fetched and processed at ${new Date().toLocaleString()}`);
+//   } catch (error) {
+//     console.error('[Auto Fetch] Error fetching ThingSpeak data:', error.message);
+//   }
+// }
 
-// Start the interval (every 3 minutes = 180000 ms)
-//setInterval(autoFetchAndProcess, 180000);
-// Optionally, run once at startup
-autoFetchAndProcess();
+// // Start the interval (every 3 minutes = 180000 ms)
+// //setInterval(autoFetchAndProcess, 180000);
+// // Optionally, run once at startup
+// autoFetchAndProcess();
 
