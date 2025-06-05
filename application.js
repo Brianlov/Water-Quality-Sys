@@ -134,7 +134,7 @@ Approuter.get('/fetch-data', async (req, res) => {
     const collection = db.collection('date');
     const latestData = await collection.find({})
       .sort({ timestamp: -1 })
-      .limit(4)
+      .limit(30)
       .toArray();
 
     res.json({
