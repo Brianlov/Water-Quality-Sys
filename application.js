@@ -172,7 +172,7 @@ Approuter.post('/fetch-data', async (req, res) => {
 async function autoFetchAndProcess() {
   const apiKey = 'CSI9TQECFXYFBE2S';
   const channelId = 2972454;
-  const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
+  const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=8`;
 
   try {
     const response = await axios.get(url);
