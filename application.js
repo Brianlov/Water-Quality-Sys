@@ -134,7 +134,7 @@ Approuter.get('/fetch-data', async (req, res) => {
     const collection = db.collection('date');
     const latestData = await collection.find({})
       .sort({ timestamp: -1 })
-      .limit(30)
+      .limit(8)
       .toArray();
 
     res.json({
@@ -172,7 +172,7 @@ Approuter.post('/fetch-data', async (req, res) => {
 async function autoFetchAndProcess() {
   const apiKey = 'CSI9TQECFXYFBE2S';
   const channelId = 2972454;
-  const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=8`;
+  const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=1`;
 
   try {
     const response = await axios.get(url);
@@ -185,7 +185,7 @@ async function autoFetchAndProcess() {
 }
 
 // Start the interval (every 3 minutes = 180000 ms)
-setInterval(autoFetchAndProcess, 180000);
+//setInterval(autoFetchAndProcess, 180000);
 // Optionally, run once at startup
 autoFetchAndProcess();
 

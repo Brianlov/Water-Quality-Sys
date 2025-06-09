@@ -30,12 +30,14 @@ const Sensorboard = () => {
   const [labels, setLabels] = useState([]);
   const [temperatureData, setTemperatureData] = useState([]);
   const [humidityData, setHumidityData] = useState([]);
-  const [oxygenData, setOxygenData] = useState([]);
-  const [lightData, setLightData] = useState([]);
+  const [TdsData, setTdsData] = useState([]);
+  const [pHData, setpHData] = useState([]);
 
   // 🟢 Fetch from your Node.js backend
   const fetchData = async () => {
     try {
+     // const response = await fetch('http://localhost:5000/fetch-data');
+
       const response = await fetch('https://idpwaterqualitymonitoring-egabc8esavczf2bz.eastasia-01.azurewebsites.net/fetch-data');
       const json = await response.json();
       console.log(json); // For debugging
@@ -49,8 +51,8 @@ const Sensorboard = () => {
       setLabels(feeds.map(entry => new Date(entry.timestamp).toLocaleTimeString()));
       setTemperatureData(feeds.map(entry => entry.temperature));
       setHumidityData(feeds.map(entry => entry.turbidity));
-      setOxygenData(feeds.map(entry => entry.tds));
-      setLightData(feeds.map(entry => entry.ph));
+      setTdsData(feeds.map(entry => entry.tds));
+      setpHData(feeds.map(entry => entry.ph));
     } catch (error) {
       console.error('Error fetching backend data:', error);
     }
@@ -59,7 +61,7 @@ const Sensorboard = () => {
   // Call fetchData when component mounts and refresh every 15 seconds
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 18000);
+    const interval = setInterval(fetchData, 1);
     return () => clearInterval(interval);
   }, []);
 
@@ -115,12 +117,12 @@ return (
       </div>
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">TDS</h3>
-        <p className="text-2xl font-bold text-green-600">{oxygenData.at(-1)} ppm</p>
+        <p className="text-2xl font-bold text-green-600">{TdsData.at(-1)} ppm</p>
         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
       </div>
       <div className="bg-white p-4 rounded-lg shadow text-center">
         <h3 className="text-sm text-gray-500">pH</h3>
-        <p className="text-2xl font-bold text-orange-500">{lightData.at(-1)}</p>
+        <p className="text-2xl font-bold text-orange-500">{pHData.at(-1)}</p>
         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
       </div>
     </div>
@@ -145,8 +147,8 @@ return (
       {[
         { title: '🌡 Temperature (°C)', data: temperatureData, color: 'red', label: 'Temperature (°C)' },
         { title: '💧 Turbidity (NTU)', data: humidityData, color: 'blue', label: 'Turbidity (NTU)' },
-        { title: '🧪 Total Dissolved Solids (TDS)', data: oxygenData, color: 'green', label: 'TDS (ppm)' },
-        { title: '⚗️ pH Level', data: lightData, color: 'orange', label: 'pH' },
+        { title: '🧪 Total Dissolved Solids (TDS)', data: TdsData, color: 'green', label: 'TDS (ppm)' },
+        { title: '⚗️ pH Level', data: pHData, color: 'orange', label: 'pH' },
       ].map((chart, index) => (
         <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center mb-4">
