@@ -120,6 +120,21 @@ async function processFeeds(feeds, channelId = 2972454) {
     
   
 
+
+  const MAX_DOCS = 10000;
+  const count = await collection.countDocuments();
+  if (count > MAX_DOCS) {
+    const toDelete = await collection.find({})
+      .sort({ timestamp: 1 }) // oldest first
+      .limit(count - MAX_DOCS)
+      .toArray();
+    const ids = toDelete.map(doc => doc._id);
+    if (ids.length > 0) {
+      await collection.deleteMany({ _id: { $in: ids } });
+      console.log(`Deleted ${ids.length} old documents to maintain max limit of ${MAX_DOCS}`);
+    }
+  }
+
   return dataToInsert;
 }
 
