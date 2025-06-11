@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import GaugeChart from 'react-gauge-chart';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 import {
@@ -29,18 +29,18 @@ const Sensorboard = () => {
   // const channelID = '2972454';
   // const apiKey = 'CSI9TQECFXYFBE2S';
 
-  const [labels, setLabels] = useState([]);
+  const [setLabels] = useState([]);
   const [temperatureData, setTemperatureData] = useState([]);
   const [humidityData, setHumidityData] = useState([]);
   const [TdsData, setTdsData] = useState([]);
   const [pHData, setpHData] = useState([]);
 
   // 🟢 Fetch from your Node.js backend
-  const fetchData = async () => {
+  const fetchData =useCallback( async () => {
     try {
-      const response = await fetch('http://localhost:5000/fetch-data');
+      //const response = await fetch('http://localhost:5000/fetch-data');
 
-      //const response = await fetch('https://idpwaterqualitymonitoring-egabc8esavczf2bz.eastasia-01.azurewebsites.net/fetch-data');
+      const response = await fetch('https://idpwaterqualitymonitoring-egabc8esavczf2bz.eastasia-01.azurewebsites.net/fetch-data');
       const json = await response.json();
       console.log(json); // For debugging
       const feeds = json.data || [];
@@ -58,14 +58,14 @@ const Sensorboard = () => {
     } catch (error) {
       console.error('Error fetching backend data:', error);
     }
-  };
+  }, [setLabels, setTemperatureData, setHumidityData, setTdsData, setpHData]);
 
   // Call fetchData when component mounts and refresh every 1 second
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchData]);
 
   // const createChartData = (data, label, color) => ({
   //   labels,
