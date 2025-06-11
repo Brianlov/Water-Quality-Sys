@@ -62,7 +62,7 @@ const Sensorboard = () => {
   // Call fetchData when component mounts and refresh every 1 second
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 1000);
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
@@ -115,29 +115,75 @@ const Sensorboard = () => {
         />
       </div>
 
-      {/* 🔍 Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white p-4 rounded-lg shadow text-center">
-          <h3 className="text-sm text-gray-500">Temperature</h3>
-          <p className="text-2xl font-bold text-red-500">{filteredTemperature.at(-1)}°C</p>
-          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow text-center">
-          <h3 className="text-sm text-gray-500">Turbidity</h3>
-          <p className="text-2xl font-bold text-blue-500">{filteredHumidity.at(-1)} NTU</p>
-          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow text-center">
-          <h3 className="text-sm text-gray-500">TDS</h3>
-          <p className="text-2xl font-bold text-green-600">{filteredTds.at(-1)} ppm</p>
-          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow text-center">
-          <h3 className="text-sm text-gray-500">pH</h3>
-          <p className="text-2xl font-bold text-orange-500">{filteredPh.at(-1)}</p>
-          <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
-        </div>
-      </div>
+     {/* 🔍 Summary Cards */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+  {/* Temperature */}
+  <div className="bg-white p-4 rounded-lg shadow text-center">
+    <h3 className="text-sm text-gray-500">Temperature</h3>
+    <p className="text-2xl font-bold text-black">
+      {filteredTemperature.at(-1)}°C
+    </p>
+    {filteredTemperature.at(-1) === 0 ? (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    ) : filteredTemperature.at(-1) > 33 ? (
+      <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
+    ) : filteredTemperature.at(-1) >= 23 && filteredTemperature.at(-1) <= 33 ? (
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
+    ) : (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    )}
+  </div>
+  {/* Turbidity (PPM) */}
+  <div className="bg-white p-4 rounded-lg shadow text-center">
+    <h3 className="text-sm text-gray-500">Turbidity</h3>
+    <p className="text-2xl font-bold text-black">
+      {filteredHumidity.at(-1)} NTU
+    </p>
+    {filteredHumidity.at(-1) === 0 ? (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    ) : filteredHumidity.at(-1) > 800 ? (
+      <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
+    ) : filteredHumidity.at(-1) < 800 ? (
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
+    ) : (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    )}
+  </div>
+  {/* TDS */}
+  <div className="bg-white p-4 rounded-lg shadow text-center">
+    <h3 className="text-sm text-gray-500">TDS</h3>
+    <p className="text-2xl font-bold text-black">
+      {filteredTds.at(-1)} ppm
+    </p>
+    {filteredTds.at(-1) === 0 ? (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    ) : filteredTds.at(-1) > 1000 ? (
+      <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
+    ) : filteredTds.at(-1) < 1000 ? (
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
+    ) : (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    )}
+  </div>
+  {/* pH */}
+  <div className="bg-white p-4 rounded-lg shadow text-center">
+    <h3 className="text-sm text-gray-500">pH</h3>
+    <p className="text-2xl font-bold text-black">
+      {typeof filteredPh.at(-1) === 'number' && !isNaN(filteredPh.at(-1))
+        ? filteredPh.at(-1).toFixed(2)
+        : '-'}
+    </p>
+    {filteredPh.at(-1) === 0 ? (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    ) : filteredPh.at(-1) > 10 || filteredPh.at(-1) < 4 ? (
+      <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
+    ) : filteredPh.at(-1) >= 6 && filteredPh.at(-1) <= 9 ? (
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
+    ) : (
+      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+    )}
+  </div>
+</div>
 
       {/* 🔵 ThingSpeak Charts (customized) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -199,6 +245,7 @@ const Sensorboard = () => {
             <h2 className="text-xl font-semibold text-gray-700">💧 Turbidity (NTU)</h2>
             <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
           </div>
+          <div style={{ fontSize: '0.8rem' }}>
           <GaugeChart
             id="gauge-ntu"
             nrOfLevels={10}
@@ -207,7 +254,9 @@ const Sensorboard = () => {
             formatTextValue={value => `${filteredHumidity.at(-1) || 0} NTU`}
             colors={['#00ff00', '#ffff00', '#ff0000']}
             arcWidth={0.3}
+            
           />
+          </div>
         </div>
 
         {/* TDS Gauge */}
@@ -238,7 +287,10 @@ const Sensorboard = () => {
           <Sparklines data={filteredPh} width={100} height={40}>
             <SparklinesLine color="orange" />
           </Sparklines>
-          <div className="text-2xl font-bold text-orange-500 mt-2">{filteredPh.at(-1)}</div>
+          <div className="text-2xl font-bold text-orange-500 mt-2">
+          {typeof filteredPh.at(-1) === 'number' && !isNaN(filteredPh.at(-1))
+          ? filteredPh.at(-1).toFixed(2): '-'}
+          </div>
         </div>
       </div>
     </div>
