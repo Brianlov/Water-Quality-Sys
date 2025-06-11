@@ -149,9 +149,10 @@ Approuter.get('/fetch-data', async (req, res) => {
     const collection = db.collection('date');
     const latestData = await collection.find({})
       .sort({ timestamp: -1 })
-      .limit(8)
+      .limit(30)
       .toArray();
-
+    
+      console.log(latestData.map(doc => doc.timestamp));
     res.json({
       message: 'Fetched latest processed data from database',
       count: latestData.length,

@@ -10,7 +10,7 @@ function Home() {
         <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white p-6 shadow-md rounded-lg mb-6 text-center">
           <h1 className="text-4xl font-bold mb-1">Enhanced Water Quality Monitoring System</h1>
           <p className="text-sm opacity-90">
-            Built with Node.js, ESP32, Azure, and Machine Learning
+            Built with React, Node.js, MongoDB, and Azure
           </p>
         </header>
 
@@ -24,7 +24,8 @@ function Home() {
 
           <h2 className="text-2xl font-semibold text-blue-700 mb-4">Welcome to the Monitoring Portal</h2>
           <p className="text-gray-700 text-lg mb-6 leading-relaxed">
-            Monitor water quality in real-time using IoT sensors and AI-powered insights.
+            Monitor water quality in real-time using IoT sensors and advanced analytics.
+            Our system provides insights into temperature, turbidity, pH, and TDS levels.
             Empower sustainability and safety with intelligent environmental monitoring.
           </p>
 
