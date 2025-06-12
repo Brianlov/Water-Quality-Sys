@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const Approuter = express.Router();
@@ -11,13 +12,13 @@ let db = client.db("water_db");
 
 
 const userChannels = {
-  2972454: '1283197435', // channelId: chatId
+  2972454:process.env.TELEGRAM_CHAT_ID, // channelId: chatId
   // Add more: channelId2: chatId2, ...
 };
 
 //telegream bot
-const TELEGRAM_TOKEN = '7049704862:AAFMYW7vhGGbUkBZ4RhJ9suEJ_adOz11V0k'; // Replace with your bot token
-const TELEGRAM_CHAT_ID = '1283197435'; // Replace with your chat ID
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN; // Replace with your bot token
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID; // Replace with your chat ID
 const telegramBot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
 
 telegramBot.onText(/\/start/, (msg) => {
@@ -186,7 +187,7 @@ Approuter.post('/fetch-data', async (req, res) => {
 
 // // Automatic fetch and process every 3 minutes
 async function autoFetchAndProcess() {
-  const apiKey = 'CSI9TQECFXYFBE2S';
+  const apiKey = process.env.THINGSPEAK_API_KEY;
   const channelId = 2972454;
   const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=1`;
 
