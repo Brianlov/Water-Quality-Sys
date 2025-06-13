@@ -1,3 +1,4 @@
+import Starfield from "./Startfield";
 import React, { useEffect, useState, useCallback } from 'react';
 import GaugeChart from 'react-gauge-chart';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
@@ -79,16 +80,41 @@ const Sensorboard = () => {
   const filteredPh = pHData.slice(startIdx, endIdx + 1);
 
   return (
-    <div className="min-h-screen p-10 font-sans bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 animate-gradient">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 drop-shadow">📊 Sensor Dashboard (ThingSpeak + Backend)</h1>
+    //<div className="min-h-screen p-10 font-sans  from-indigo-100 via-purple-100 to-pink-100 animate-gradient">
+    <div className="bg-animated-gradient p-10 font-sans">
+       <div className="glow-overlay"></div>
+       <Starfield starCount={120} />
+       {/* <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 drop-shadow">📊 Sensor Dashboard (ThingSpeak + Backend)</h1> */}
+        <h1
+  style={{
+    fontFamily: `'Impact', 'Arial Black', 'sans-serif'`,
+    fontSize: '3rem',
+    color: '#fff',
+    letterSpacing: '1px',
+    textShadow: '2px 2px 5px rgba(0,0,0,0.5)',
+    marginBottom: '2rem',
+  }}
+>
+  📊 Sensor Dashboard
+</h1>
+
+
+      {/* 🖼️ Sensor Image */}
+      <div className="flex justify-center mb-8">
+        <img
+          src="http://2.bp.blogspot.com/-YOBYivWTsLU/TWaaIkWecCI/AAAAAAAAEzY/i80B4_qauJM/s1600/Utem_B.png"
+          alt="Utem setup"
+          className="w-full max-w-60 max-h-60 rounded-lg shadow-lg"
+        />
+      </div>
 
       {/* 🕒 Time Range Filter */}
-      <div className="flex gap-4 mb-8 items-center">
-        <label className="font-semibold">Start Time:</label>
+      <div className="flex gap-4 mb-8 items-center justify-end text-white ">
+        <label className="font-semibold text-white-700">Start Time:</label>
         <select
           value={startIdx}
           onChange={e => setStartIdx(Number(e.target.value))}
-          className="border rounded px-2 py-1"
+          className="border rounded px-2 py-1 text-white bg-gray-800"
         >
           {labels.map((label, idx) => (
             <option key={label + idx} value={idx}>{label}</option>
@@ -98,21 +124,12 @@ const Sensorboard = () => {
         <select
           value={endIdx}
           onChange={e => setEndIdx(Number(e.target.value))}
-          className="border rounded px-2 py-1"
+          className="border rounded px-2 py-1 text-white bg-gray-800"
         >
           {labels.map((label, idx) => (
             <option key={label + idx} value={idx}>{label}</option>
           ))}
         </select>
-      </div>
-
-      {/* 🖼️ Sensor Image */}
-      <div className="flex justify-center mb-8">
-        <img
-          src="http://2.bp.blogspot.com/-YOBYivWTsLU/TWaaIkWecCI/AAAAAAAAEzY/i80B4_qauJM/s1600/Utem_B.png"
-          alt="Utem setup"
-          className="w-full max-w-60 max-h-60 rounded-lg shadow-lg"
-        />
       </div>
 
      {/* 🔍 Summary Cards */}

@@ -12,3 +12,27 @@
 .scale-hover:hover {
   transform: scale(1.05);
 }
+
+/* Add to your CSS file or inside a <style> tag */
+.bg-animated-gradient {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #232526, #414345, #6a82fb, #fc5c7d);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+.glow-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 20% 40%, rgba(255,255,255,0.08) 0, transparent 60%),
+              radial-gradient(circle at 80% 60%, rgba(255,255,255,0.06) 0, transparent 70%);
+  mix-blend-mode: lighten;
+}

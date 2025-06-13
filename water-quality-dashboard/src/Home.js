@@ -1,13 +1,18 @@
 import React from 'react';
+import Starfield from "./Startfield";
 import { Link } from 'react-router-dom';
 
 function Home() {
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 text-gray-800 flex items-center justify-center">
       <div className="w-full max-w-5xl p-6">
+       
 
         {/* Header */}
         <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white p-6 shadow-md rounded-lg mb-6 text-center">
+          
+          <Starfield starCount={120} />
           <h1 className="text-4xl font-bold mb-1">Enhanced Water Quality Monitoring System</h1>
           <p className="text-sm opacity-90">
             Built with React, Node.js, MongoDB, and Azure
@@ -16,6 +21,7 @@ function Home() {
 
         {/* Main Content */}
         <main className="bg-white shadow-md rounded-lg p-10 text-center">
+        <div className="glow-overlay"></div>
           <img
             src="https://tse3.mm.bing.net/th?id=OIP.3ASqjQJIsJRf8ZskxftNLQHaHa&pid=Api&P=0&h=180"
             alt="Water Quality Icon"
@@ -28,7 +34,6 @@ function Home() {
             Our system provides insights into temperature, turbidity, pH, and TDS levels.
             Empower sustainability and safety with intelligent environmental monitoring.
           </p>
-
           <Link
             to="/sensorboard"
             className="inline-block bg-blue-600 text-white px-8 py-3 rounded-xl text-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:scale-105"
