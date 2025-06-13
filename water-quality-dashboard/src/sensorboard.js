@@ -32,6 +32,11 @@ const Sensorboard = () => {
   const [TdsData, setTdsData] = useState([]);
   const [pHData, setpHData] = useState([]);
 
+  // Warning state
+  const [showWarning, setShowWarning] = useState(false);
+  const [warningMsg, setWarningMsg] = useState('');
+  const [lastWarningMsg, setLastWarningMsg] = useState('');
+
   // Time range filter state
   const [startIdx, setStartIdx] = useState(0);
   const [endIdx, setEndIdx] = useState(0);
@@ -78,6 +83,38 @@ const Sensorboard = () => {
   const filteredHumidity = humidityData.slice(startIdx, endIdx + 1);
   const filteredTds = TdsData.slice(startIdx, endIdx + 1);
   const filteredPh = pHData.slice(startIdx, endIdx + 1);
+
+  // Update warning message based on filtered data
+  useEffect(() => {
+    let msg = '';
+    if (filteredTemperature.at(-1) > 33) {
+      msg += 'Temperature is above safe threshold!\n';
+    }
+    if (filteredTds.at(-1) > 1000) {
+      msg += 'TDS is above safe threshold!\n';
+    }
+    if (filteredHumidity.at(-1) > 800) {
+      msg += 'Turbidity is above safe threshold!\n';
+    }
+    if (filteredPh.at(-1) > 10 || filteredPh.at(-1) < 4) {
+      msg += 'pH is outside safe range!\n';
+    }
+   // Only show the warning if the message has changed
+  if (msg && msg !== lastWarningMsg) {
+    setWarningMsg(msg);
+    setShowWarning(true);
+    setLastWarningMsg(msg);
+  }
+  // If everything is normal, hide the warning and reset lastWarningMsg
+  if (!msg && lastWarningMsg) {
+    setShowWarning(false);
+    setWarningMsg('');
+    setLastWarningMsg('');
+  }
+  }, [filteredTemperature, filteredTds, filteredHumidity, filteredPh, lastWarningMsg]);
+
+
+  
 
   return (
     //<div className="min-h-screen p-10 font-sans  from-indigo-100 via-purple-100 to-pink-100 animate-gradient">
@@ -132,6 +169,21 @@ const Sensorboard = () => {
         </select>
       </div>
 
+      {/* ⚠️ Warning Message */}
+       {showWarning && (
+  <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black bg-opacity-40">
+    <div className="bg-yellow-200 border-l-4 border-yellow-600 text-yellow-800 p-6 rounded shadow-lg">
+      <strong>Warning!</strong>
+      <pre className="whitespace-pre-wrap">{warningMsg}</pre>
+      <button
+        className="mt-2 px-3 py-1 bg-yellow-600 text-white rounded"
+        onClick={() => setShowWarning(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
      {/* 🔍 Summary Cards */}
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
   {/* Temperature */}
