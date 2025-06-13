@@ -41,6 +41,9 @@ const Sensorboard = () => {
   const [startIdx, setStartIdx] = useState(0);
   const [endIdx, setEndIdx] = useState(0);
 
+  // Chart options
+  const [showThingSpeak, setShowThingSpeak] = useState(true);
+
   // Fetch from your Node.js backend
   const fetchData = useCallback(async () => {
     try {
@@ -136,14 +139,23 @@ const Sensorboard = () => {
 </h1>
 
 
-      {/* 🖼️ Sensor Image */}
-      <div className="flex justify-center mb-8">
-        <img
-          src="http://2.bp.blogspot.com/-YOBYivWTsLU/TWaaIkWecCI/AAAAAAAAEzY/i80B4_qauJM/s1600/Utem_B.png"
-          alt="Utem setup"
-          className="w-full max-w-60 max-h-60 rounded-lg shadow-lg"
-        />
-      </div>
+      {/* 🖼️ Sensor Image & Slogan */}
+      <div className="flex items-center justify-center gap-8 mb-8">
+      <img 
+      src="https://ftkek.utem.edu.my/templates/yootheme/cache/48/FTKEK_INDIGO-48a5adb5.png"
+           alt="Utem setup"
+           className="w-40 h-40 rounded-lg shadow-lg object-contain"
+          />
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">
+              Real-Time Water Quality Monitoring
+            </h2>
+    <p className="text-lg text-blue-100 font-semibold italic">
+      Clean Water, Healthy Life
+    </p>
+  </div>
+</div>
+
 
       {/* 🕒 Time Range Filter */}
       <div className="flex gap-4 mb-8 items-center justify-end text-white ">
@@ -184,6 +196,59 @@ const Sensorboard = () => {
     </div>
   </div>
 )}
+
+{/* Expand/Collapse Button */}
+    <div className="flex justify-end mb-2">
+      <button
+        onClick={() => setShowThingSpeak((prev) => !prev)}
+        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+      >
+        {showThingSpeak ? "Hide histories graphs ▲" : "Show histories graphs ▼"}
+      </button>
+    </div>
+
+{/* 🔵 ThingSpeak Charts (customized) */}
+    {showThingSpeak && (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="bg-white shadow-md rounded-xl overflow-hidden">
+          <iframe
+            width="100%"
+            height="260"
+            style={{ border: '1px solid #cccccc' }}
+            src="https://thingspeak.com/channels/2972454/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=15&title=Temperature&type=column&yaxis=degree%28%C2%B0C%29&yaxismax=50"
+            title="Temperature"
+          />
+        </div>
+        <div className="bg-white shadow-md rounded-xl overflow-hidden">
+          <iframe
+            width="100%"
+            height="260"
+            style={{ border: '1px solid #cccccc' }}
+            src="https://thingspeak.com/channels/2972454/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=daily&title=Turbidility&type=column&yaxis=NTU&yaxismax=10K&yaxismin=0"
+            title="Turbidity"
+          />
+        </div>
+        <div className="bg-white shadow-md rounded-xl overflow-hidden">
+          <iframe
+            width="100%"
+            height="260"
+            style={{ border: '1px solid #cccccc' }}
+            src="https://thingspeak.com/channels/2972454/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=TDS&type=line&xaxis=Date&yaxis=Ppm&yaxismax=5000&yaxismin=0"
+            title="TDS"
+          />
+        </div>
+        <div className="bg-white shadow-md rounded-xl overflow-hidden">
+          <iframe
+            width="100%"
+            height="260"
+            style={{ border: '1px solid #cccccc' }}
+            src="https://thingspeak.com/channels/2972454/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=PH&type=line&xaxis=Date&yaxis=pH&yaxismax=14&yaxismin=0"
+            title="PH"
+          />
+        </div>
+      </div>
+    )}
+
      {/* 🔍 Summary Cards */}
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
   {/* Temperature */}
@@ -251,48 +316,9 @@ const Sensorboard = () => {
     ) : (
       <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
     )}
-  </div>
-</div>
+         </div>
+    </div>
 
-      {/* 🔵 ThingSpeak Charts (customized) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white shadow-md rounded-xl overflow-hidden">
-          <iframe
-            width="100%"
-            height="260"
-            style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=15&title=Temperature&type=column&yaxis=degree%28%C2%B0C%29&yaxismax=50"
-            title="Temperature"
-          />
-        </div>
-        <div className="bg-white shadow-md rounded-xl overflow-hidden">
-          <iframe
-            width="100%"
-            height="260"
-            style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=daily&title=Turbidility&type=column&yaxis=NTU&yaxismax=10K&yaxismin=0"
-            title="Turbidity"
-          />
-        </div>
-        <div className="bg-white shadow-md rounded-xl overflow-hidden">
-          <iframe
-            width="100%"
-            height="260"
-            style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=TDS&type=line&xaxis=Date&yaxis=Ppm&yaxismax=5000&yaxismin=0"
-            title="TDS"
-          />
-        </div>
-        <div className="bg-white shadow-md rounded-xl overflow-hidden">
-          <iframe
-            width="100%"
-            height="260"
-            style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=PH&type=line&xaxis=Date&yaxis=pH&yaxismax=14&yaxismin=0"
-            title="PH"
-          />
-        </div>
-      </div>
 
       {/* 🟢 MongoDB-based Charts */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
