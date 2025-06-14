@@ -141,9 +141,6 @@ async function processFeeds(feeds, channelId = 2972454) {
 
 // GET endpoint: fetch from ThingSpeak
 Approuter.get('/fetch-data', async (req, res) => {
-  // const apiKey = 'CSI9TQECFXYFBE2S';
-  // const channelId = 2972454;
-  // const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=4`;
 
   try {
      // Get the latest 4 entries, sorted by timestamp descending
@@ -201,8 +198,7 @@ async function autoFetchAndProcess() {
   }
 }
 
-// Start the interval (every 3 minutes = 180000 ms)
-//setInterval(autoFetchAndProcess, 180000);
-// Optionally, run once at startup
 autoFetchAndProcess();
+
+setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
 

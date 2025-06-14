@@ -48,7 +48,7 @@ const Sensorboard = () => {
   const fetchData = useCallback(async () => {
     try {
      const response = await fetch('https://idpwaterqualitymonitoring-egabc8esavczf2bz.eastasia-01.azurewebsites.net/fetch-data');
-       //const response = await fetch('http://localhost:5000/fetch-data');
+      
       const json = await response.json();
       console.log('Fetched data from backend:', json);
       const feeds = json.data || [];
