@@ -211,7 +211,7 @@ async function autoFetchAndProcess() {
   }
 }
 
-//autoFetchAndProcess();
+autoFetchAndProcess();
 
-//setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
+setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
 
