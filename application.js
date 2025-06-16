@@ -50,7 +50,20 @@ async function processFeeds(feeds, channelId = 2972454) {
     timestamp: feed.created_at ? new Date(feed.created_at) : new Date(),
     channel_id: feed.channel_id || channelId,
   }));
-  console.log('Data to insert:', dataToInsert);
+  
+  // Check for negative values
+dataToInsert.forEach(entry => {
+  if (
+    entry.temperature < 0 ||
+    entry.turbidity < 0 ||
+    entry.tds < 0 ||
+    entry.ph < 0
+  ) {
+    throw new Error(`Negative value detected in sensor data: ${JSON.stringify(entry)}`);
+  }
+});
+
+console.log('Data to insert:', dataToInsert);
 
   const THRESHOLDS = {
     high_temperature: 30,
@@ -146,7 +159,7 @@ Approuter.get('/fetch-data', async (req, res) => {
      // Get the latest 4 entries, sorted by timestamp descending
     const collection = db.collection('date');
     const latestData = await collection.find({})
-      .sort({ timestamp: -1 })
+      .sort({ timestamp: 1 })
       .limit(30)
       .toArray();
     
@@ -182,7 +195,7 @@ Approuter.post('/fetch-data', async (req, res) => {
   }
 });
 
-// // Automatic fetch and process every 3 minutes
+// // Automatic fetch and process every 1s
 async function autoFetchAndProcess() {
   const apiKey = process.env.THINGSPEAK_API_KEY;
   const channelId = 2972454;
@@ -198,7 +211,7 @@ async function autoFetchAndProcess() {
   }
 }
 
-autoFetchAndProcess();
+//autoFetchAndProcess();
 
-setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
+//setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
 

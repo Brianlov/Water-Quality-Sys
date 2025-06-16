@@ -52,17 +52,20 @@ const Sensorboard = () => {
       const json = await response.json();
       console.log('Fetched data from backend:', json);
       const feeds = json.data || [];
+      const feedsReversed = [...feeds].reverse(); // oldest to newest
 
       if (feeds.length === 0) {
         console.warn('No data returned from backend');
         return;
       }
 
-      setLabels(feeds.map(entry => new Date(entry.timestamp).toLocaleTimeString()));
-      setTemperatureData(feeds.map(entry => entry.temperature));
-      setHumidityData(feeds.map(entry => entry.turbidity));
-      setTdsData(feeds.map(entry => entry.tds));
-      setpHData(feeds.map(entry => entry.ph));
+      setLabels(feedsReversed.map(entry => new Date(entry.timestamp).toLocaleTimeString()));
+      setLabels(feedsReversed.map((_, idx) => `${feeds.length - 1 - idx}s ago`)
+);
+      setTemperatureData(feedsReversed.map(entry => entry.temperature));
+      setHumidityData(feedsReversed.map(entry => entry.turbidity));
+      setTdsData(feedsReversed.map(entry => entry.tds));
+      setpHData(feedsReversed.map(entry => entry.ph));
     } catch (error) {
       console.error('Error fetching backend data:', error);
     }
@@ -215,7 +218,7 @@ const Sensorboard = () => {
             width="100%"
             height="260"
             style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=15&title=Temperature&type=column&yaxis=degree%28%C2%B0C%29&yaxismax=50"
+            src="https://thingspeak.mathworks.com/channels/2972454/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=daily&title=Temperature&type=column&xaxis=Date&yaxis=degree%28%C2%B0C%29&yaxismax=50"
             title="Temperature"
           />
         </div>
@@ -233,7 +236,7 @@ const Sensorboard = () => {
             width="100%"
             height="260"
             style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=TDS&type=line&xaxis=Date&yaxis=Ppm&yaxismax=5000&yaxismin=0"
+            src="https://thingspeak.mathworks.com/channels/2972454/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=daily&title=TDS&type=line&xaxis=Date&yaxis=Ppm&yaxismax=5000&yaxismin=0"
             title="TDS"
           />
         </div>
@@ -242,7 +245,7 @@ const Sensorboard = () => {
             width="100%"
             height="260"
             style={{ border: '1px solid #cccccc' }}
-            src="https://thingspeak.com/channels/2972454/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&title=PH&type=line&xaxis=Date&yaxis=pH&yaxismax=14&yaxismin=0"
+            src="https://thingspeak.mathworks.com/channels/2972454/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=200&timescale=daily&title=PH&type=line&xaxis=Date&yaxis=pH&yaxismax=14&yaxismin=0"
             title="PH"
           />
         </div>
