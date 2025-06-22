@@ -13,6 +13,7 @@ let db = client.db("water_db");
 
 const userChannels = {
   2972454:process.env.TELEGRAM_CHAT_ID, // channelId: chatId
+  2972454:process.env.group_id
   // Add more: channelId2: chatId2, ...
 };
 
