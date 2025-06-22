@@ -117,10 +117,10 @@ console.log('Data to insert:', dataToInsert);
     }
     // else: ignore
   });
-
+  console.log('Processed data:', dataToInsert);
   // Store all data in MongoDB (no duplicate check)
   const collection = db.collection('date');
-    await collection.insertMany(dataToInsert);
+   await collection.insertMany(dataToInsert);
     
   
 
@@ -132,6 +132,8 @@ console.log('Data to insert:', dataToInsert);
       .sort({ timestamp: 1 }) // oldest first
       .limit(count - MAX_DOCS)
       .toArray();
+    
+      console.log('Deleting these old documents:', toDelete);
     const ids = toDelete.map(doc => doc._id);
     if (ids.length > 0) {
       await collection.deleteMany({ _id: { $in: ids } });
@@ -149,7 +151,7 @@ Approuter.get('/fetch-data', async (req, res) => {
      // Get the latest 4 entries, sorted by timestamp descending
     const collection = db.collection('date');
     const latestData = await collection.find({})
-      .sort({ timestamp: 1 })
+      .sort({ timestamp: -1 })
       .limit(30)
       .toArray();
     
