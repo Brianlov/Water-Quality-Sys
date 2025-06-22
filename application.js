@@ -51,17 +51,7 @@ async function processFeeds(feeds, channelId = 2972454) {
     channel_id: feed.channel_id || channelId,
   }));
   
-  // Check for negative values
-dataToInsert.forEach(entry => {
-  if (
-    entry.temperature < 0 ||
-    entry.turbidity < 0 ||
-    entry.tds < 0 ||
-    entry.ph < 0
-  ) {
-    throw new Error(`Negative value detected in sensor data: ${JSON.stringify(entry)}`);
-  }
-});
+
 
 console.log('Data to insert:', dataToInsert);
 
@@ -213,5 +203,5 @@ async function autoFetchAndProcess() {
 
 autoFetchAndProcess();
 
-setInterval(autoFetchAndProcess, 1000); // Run every 1 second (1000 ms)
+setInterval(autoFetchAndProcess, 15000); // Run every 1 second (15000 ms)
 
