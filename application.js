@@ -75,8 +75,6 @@ console.log('Data to insert:', dataToInsert);
 
    // Only check the latest entry
   const latestEntry = dataToInsert[dataToInsert.length - 1];
-
-  
     let warnings = 0;
     let critical = false;
     let messages = [];
@@ -117,7 +115,6 @@ console.log('Data to insert:', dataToInsert);
     warnings++;
     messages.push('pH is slightly out of optimal range\n');
   }
-
   // Send only one alert per fetch, if needed
   if (critical) {
     sendTelegramAlert('CRITICAL', messages.join(''), latestEntry.channel_id, latestEntry);

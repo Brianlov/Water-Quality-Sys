@@ -30,7 +30,7 @@ function Home() {
 
           <h2 className="text-2xl font-semibold text-blue-700 mb-4">Welcome to the Monitoring Portal</h2>
           <p className="text-gray-700 text-lg mb-6 leading-relaxed">
-            Monitor water quality in real-time using IoT sensors and advanced analytics.
+            Monitor water quality in real-time using IoT sensors for advanced analytics.
             Our system provides insights into temperature, turbidity, pH, and TDS levels.
             Empower sustainability and safety with intelligent environmental monitoring.
           </p>
@@ -47,7 +47,7 @@ function Home() {
           <h3 className="text-xl font-semibold text-blue-700 mb-3">🔍 About This Project</h3>
           <p className="text-gray-700 leading-relaxed">
             STM32 collects data from sensors (temperature, turbidity, pH, TDS) and sends it via ESP32 to the Node.js backend.
-            Azure and MongoDB enable real-time storage and display of data in an integrated dashboard.
+            Azure and MongoDB enable real-time storage and display of data in an integrated dashboard using React.js.
           </p>
         </section>
 
