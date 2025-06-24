@@ -73,56 +73,59 @@ console.log('Data to insert:', dataToInsert);
     warning_ph_range_high: 8.0
   };
 
-  dataToInsert.forEach(entry => {
+   // Only check the latest entry
+  const latestEntry = dataToInsert[dataToInsert.length - 1];
+
+  
     let warnings = 0;
     let critical = false;
     let messages = [];
 
     // Temperature
-    if (entry.temperature >= THRESHOLDS.high_temperature) {
-      warnings++;
-      messages.push('Temperature is high\n');
-    }
-    if (entry.temperature < THRESHOLDS.low_temperature) {
-      warnings++;
-      messages.push('Temperature is low\n');
-    }
+  if (latestEntry.temperature >= THRESHOLDS.high_temperature) {
+    warnings++;
+    messages.push('Temperature is high\n');
+  }
+  if (latestEntry.temperature < THRESHOLDS.low_temperature) {
+    warnings++;
+    messages.push('Temperature is low\n');
+  }
 
-    // Turbidity
-    if (entry.turbidity >= THRESHOLDS.critical_turbidity) {
-      critical = true;
-      messages.push('Turbidity is CRITICAL\n');
-    } else if (entry.turbidity >= 5) {
-      warnings++;
-      messages.push('Turbidity is high\n');
-    }
+  // Turbidity
+  if (latestEntry.turbidity >= THRESHOLDS.critical_turbidity) {
+    critical = true;
+    messages.push('Turbidity is CRITICAL\n');
+  } else if (latestEntry.turbidity >= 5) {
+    warnings++;
+    messages.push('Turbidity is high\n');
+  }
 
-    // TDS
-    if (entry.tds >= THRESHOLDS.critical_tds) {
-      critical = true;
-      messages.push('TDS is CRITICAL\n');
-    } else if (entry.tds >= THRESHOLDS.warning_tds) {
-      warnings++;
-      messages.push('TDS is high\n');
-    }
+  // TDS
+  if (latestEntry.tds >= THRESHOLDS.critical_tds) {
+    critical = true;
+    messages.push('TDS is CRITICAL\n');
+  } else if (latestEntry.tds >= THRESHOLDS.warning_tds) {
+    warnings++;
+    messages.push('TDS is high\n');
+  }
 
-    // pH
-    if (entry.ph < THRESHOLDS.warning_ph_low || entry.ph >= THRESHOLDS.warning_ph_high) {
-      warnings++;
-      messages.push('pH is out of safe range\n');
-    } else if (entry.ph < THRESHOLDS.warning_ph_range_low || entry.ph >= THRESHOLDS.warning_ph_range_high) {
-      warnings++;
-      messages.push('pH is slightly out of optimal range\n');
-    }
+  // pH
+  if (latestEntry.ph < THRESHOLDS.warning_ph_low || latestEntry.ph >= THRESHOLDS.warning_ph_high) {
+    warnings++;
+    messages.push('pH is out of safe range\n');
+  } else if (latestEntry.ph < THRESHOLDS.warning_ph_range_low || latestEntry.ph >= THRESHOLDS.warning_ph_range_high) {
+    warnings++;
+    messages.push('pH is slightly out of optimal range\n');
+  }
 
-    // Send alerts
-    if (critical) {
-      sendTelegramAlert('CRITICAL', messages.join(''), entry.channel_id,entry);
-    } else if (warnings >= 2) {
-      sendTelegramAlert('WARNING', messages.join(''), entry.channel_id,entry);
-    }
-    // else: ignore
-  });
+  // Send only one alert per fetch, if needed
+  if (critical) {
+    sendTelegramAlert('CRITICAL', messages.join(''), latestEntry.channel_id, latestEntry);
+  } else if (warnings >= 2) {
+    sendTelegramAlert('WARNING', messages.join(''), latestEntry.channel_id, latestEntry);
+  }
+
+  
   console.log('Processed data:', dataToInsert);
   // Store all data in MongoDB (no duplicate check)
   const collection = db.collection('date');
