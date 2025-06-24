@@ -59,9 +59,9 @@ const Sensorboard = () => {
         return;
       }
 
-      setLabels(feedsReversed.map(entry => new Date(entry.timestamp).toLocaleTimeString()));
-      setLabels(feedsReversed.map((_, idx) => `${feeds.length - 1 - idx}s ago`)
-);
+      setLabels(feedsReversed.map(entry => new Date(entry.timestamp).toLocaleString()));
+     // setLabels(feedsReversed.map((_, idx) => `${feeds.length - 1 - idx}s ago`)//
+//);
       setTemperatureData(feedsReversed.map(entry => entry.temperature));
       setHumidityData(feedsReversed.map(entry => entry.turbidity));
       setTdsData(feedsReversed.map(entry => entry.tds));
@@ -89,6 +89,7 @@ const Sensorboard = () => {
   const filteredHumidity = humidityData.slice(startIdx, endIdx + 1);
   const filteredTds = TdsData.slice(startIdx, endIdx + 1);
   const filteredPh = pHData.slice(startIdx, endIdx + 1);
+  const [warningTimeout, setWarningTimeout] = useState(null);
 
   // Update warning message based on filtered data
   useEffect(() => {
@@ -105,20 +106,36 @@ const Sensorboard = () => {
     if (filteredPh.at(-1) > 10 || filteredPh.at(-1) < 4) {
       msg += 'pH is outside safe range!\n';
     }
-   // Only show the warning if the message has changed
-  if (msg && msg !== lastWarningMsg) {
+   if (msg && msg !== lastWarningMsg) {
     setWarningMsg(msg);
     setShowWarning(true);
     setLastWarningMsg(msg);
+    // If a timer is running, clear it
+    if (warningTimeout) {
+      clearTimeout(warningTimeout);
+      setWarningTimeout(null);
+    }
   }
-  // If everything is normal, hide the warning and reset lastWarningMsg
-  if (!msg && lastWarningMsg) {
-    setShowWarning(false);
-    setWarningMsg('');
-    setLastWarningMsg('');
-  }
-  }, [filteredTemperature, filteredTds, filteredHumidity, filteredPh, lastWarningMsg]);
 
+  // If everything is normal, start a 20s timer to hide the warning
+  if (!msg && lastWarningMsg && !warningTimeout) {
+    const timeout = setTimeout(() => {
+      setShowWarning(false);
+      setWarningMsg('');
+      setLastWarningMsg('');
+      setWarningTimeout(null);
+    }, 20000); // 20 seconds
+    setWarningTimeout(timeout);
+  }
+
+  // Cleanup on unmount or dependencies change
+  return () => {
+    if (warningTimeout) {
+      clearTimeout(warningTimeout);
+      setWarningTimeout(null);
+    }
+  };
+}, [filteredTemperature, filteredTds, filteredHumidity, filteredPh, lastWarningMsg, warningTimeout]);
 
   
 
@@ -329,11 +346,12 @@ const Sensorboard = () => {
         <div className="bg-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-700">🌡 Temperature (°C)</h2>
-            <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
+           <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
           </div>
           <Sparklines data={filteredTemperature} width={100} height={40}>
             <SparklinesLine color="red" />
           </Sparklines>
+        
           <div className="text-2xl font-bold text-red-500 mt-2">{filteredTemperature.at(-1)}°C</div>
         </div>
 

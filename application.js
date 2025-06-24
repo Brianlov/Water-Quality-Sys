@@ -38,8 +38,13 @@ function sendTelegramAlert(level, details, channelId) {
     `*Time:* ${now}\n` +
     `*Details:*\n\n${details}\n\n` +
     `Please check your water quality immediately!`;
-  telegramBot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+ // telegramBot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+ // Set a timeout (e.g., 5 seconds = 5000 ms)
+  setTimeout(() => {
+    telegramBot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+  }, 30000); // Change 5000 to your desired delay in milliseconds
 }
+
 
 // Shared function to process feeds, send alerts, and store in MongoDB
 async function processFeeds(feeds, channelId = 2972454) {
@@ -112,9 +117,9 @@ console.log('Data to insert:', dataToInsert);
 
     // Send alerts
     if (critical) {
-      sendTelegramAlert('CRITICAL', messages.join(''), entry.channel_id);
+      sendTelegramAlert('CRITICAL', messages.join(''), entry.channel_id,entry);
     } else if (warnings >= 2) {
-      sendTelegramAlert('WARNING', messages.join(''), entry.channel_id);
+      sendTelegramAlert('WARNING', messages.join(''), entry.channel_id,entry);
     }
     // else: ignore
   });
@@ -206,5 +211,5 @@ async function autoFetchAndProcess() {
 
 autoFetchAndProcess();
 
-setInterval(autoFetchAndProcess, 1000); // Run every 1 second (15000 ms)
+setInterval(autoFetchAndProcess, 15000); // Run every 1 second (15000 ms)
 
