@@ -294,7 +294,7 @@ const Sensorboard = () => {
       {filteredHumidity.at(-1)} NTU
     </p>
     {filteredHumidity.at(-1) === 0 ? (
-      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
     ) : filteredHumidity.at(-1) > 800 ? (
       <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
     ) : filteredHumidity.at(-1) < 800 ? (
@@ -310,7 +310,7 @@ const Sensorboard = () => {
       {filteredTds.at(-1)} ppm
     </p>
     {filteredTds.at(-1) === 0 ? (
-      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Warning</span>
+      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Normal</span>
     ) : filteredTds.at(-1) > 1000 ? (
       <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
     ) : filteredTds.at(-1) < 1000 ? (
