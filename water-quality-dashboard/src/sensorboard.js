@@ -1,7 +1,7 @@
 import Starfield from "./Startfield";
 import React, { useEffect, useState, useCallback } from 'react';
 import GaugeChart from 'react-gauge-chart';
-import { Sparklines, SparklinesLine } from 'react-sparklines';
+//import { Sparklines, SparklinesLine } from 'react-sparklines';
 import {
   Chart as ChartJS,
   LineElement,
@@ -43,6 +43,8 @@ const Sensorboard = () => {
 
   // Chart options
   const [showThingSpeak, setShowThingSpeak] = useState(true);
+
+  
 
   // Fetch from your Node.js backend
   const fetchData = useCallback(async () => {
@@ -340,20 +342,26 @@ const Sensorboard = () => {
     </div>
 
 
-      {/* 🟢 MongoDB-based Charts */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Temperature Sparkline */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-700">🌡 Temperature (°C)</h2>
-           <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
-          </div>
-          <Sparklines data={filteredTemperature} width={100} height={40}>
-            <SparklinesLine color="red" />
-          </Sparklines>
-        
-          <div className="text-2xl font-bold text-red-500 mt-2">{filteredTemperature.at(-1)}°C</div>
-        </div>
+     {/* 🟢 MongoDB-based Charts */}
+<div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+     {/* Temperature Gauge */}
+  <div className="bg-white p-6 rounded-xl shadow-lg">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold text-gray-700">🌡 Temperature (°C)</h2>
+      <span className="text-sm text-gray-500 items-center">Last updated: {filteredLabels.at(-1)}</span>
+    </div>
+    <div style={{ fontSize: '0.8rem' }}>
+      <GaugeChart
+        id="gauge-temperature"
+        nrOfLevels={10}
+        percent={Math.min((filteredTemperature.at(-1) || 0) / 50, 1)} // assuming 50°C max
+        textColor="#222"
+        formatTextValue={value => `${filteredTemperature.at(-1) || 0} °C`}
+        colors={['#00ff00', '#ffff00', '#ff0000']}
+        arcWidth={0.3}
+      />
+    </div>
+  </div>
 
         {/* NTU Gauge */}
         <div className="bg-white p-6 rounded-xl shadow-lg">
@@ -394,21 +402,33 @@ const Sensorboard = () => {
           </div>
         </div>
 
-        {/* pH Sparkline */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-700">⚗️ pH Level</h2>
-            <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
-          </div>
-          <Sparklines data={filteredPh} width={100} height={40}>
-            <SparklinesLine color="orange" />
-          </Sparklines>
-          <div className="text-2xl font-bold text-orange-500 mt-2">
-          {typeof filteredPh.at(-1) === 'number' && !isNaN(filteredPh.at(-1))
-          ? filteredPh.at(-1).toFixed(2): '-'}
-          </div>
-        </div>
-      </div>
+  
+
+
+ 
+  {/* pH Gauge */}
+  <div className="bg-white p-6 rounded-xl shadow-lg">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold text-gray-700">⚗️ pH Level</h2>
+      <span className="text-sm text-gray-500">Last updated: {filteredLabels.at(-1)}</span>
+    </div>
+    <div style={{ fontSize: '0.8rem' }}>
+      <GaugeChart
+        id="gauge-ph"
+        nrOfLevels={10}
+        percent={Math.min((filteredPh.at(-1) || 0) / 14, 1)} // pH scale 0-14
+        textColor="#222"
+        formatTextValue={value =>
+          typeof filteredPh.at(-1) === 'number' && !isNaN(filteredPh.at(-1))
+            ? filteredPh.at(-1).toFixed(2) + ' pH'
+            : '-'
+        }
+        colors={['#ff0000', '#ffff00', '#00ff00']}
+        arcWidth={0.3}
+      />
+    </div>
+  </div>
+</div>
     </div>
   );
 };
