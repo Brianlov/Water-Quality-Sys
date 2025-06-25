@@ -65,10 +65,11 @@ console.log('Data to insert:', dataToInsert);
     high_temperature: 30,
     low_temperature: 10,
     critical_turbidity: 10,
+    warning_turbidity: 5,
     warning_tds: 500,
     critical_tds: 1000,
-    warning_ph_low: 5.0,
-    warning_ph_high: 10.0,
+    critical_ph_low: 5.0,
+    critical_ph_high: 10.0,
     warning_ph_range_low: 6.5,
     warning_ph_range_high: 8.0
   };
@@ -108,8 +109,8 @@ console.log('Data to insert:', dataToInsert);
   }
 
   // pH
-  if (latestEntry.ph < THRESHOLDS.warning_ph_low || latestEntry.ph >= THRESHOLDS.warning_ph_high) {
-    warnings++;
+  if (latestEntry.ph < THRESHOLDS.critical_ph_low || latestEntry.ph >= THRESHOLDS.critical_ph_high) {
+    critical = true;
     messages.push('pH is out of safe range\n');
   } else if (latestEntry.ph < THRESHOLDS.warning_ph_range_low || latestEntry.ph >= THRESHOLDS.warning_ph_range_high) {
     warnings++;
