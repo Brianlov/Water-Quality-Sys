@@ -129,24 +129,28 @@ console.log('Data to insert:', dataToInsert);
   const collection = db.collection('date');
    await collection.insertMany(dataToInsert);
     
+   
   
 
 
-  const MAX_DOCS = 10000;
-  const count = await collection.countDocuments();
-  if (count > MAX_DOCS) {
-    const toDelete = await collection.find({})
-      .sort({ timestamp: 1 }) // oldest first
-      .limit(count - MAX_DOCS)
-      .toArray();
+  // const MAX_DOCS = 10000;
+  // const count = await collection.countDocuments();
+  // if (count > MAX_DOCS) {
+  //   const toDelete = await collection.find({})
+  //     .sort({ timestamp: 1 }) // oldest first
+  //     .limit(count - MAX_DOCS)
+  //     .toArray();
     
-      console.log('Deleting these old documents:', toDelete);
-    const ids = toDelete.map(doc => doc._id);
-    if (ids.length > 0) {
-      await collection.deleteMany({ _id: { $in: ids } });
-      console.log(`Deleted ${ids.length} old documents to maintain max limit of ${MAX_DOCS}`);
-    }
-  }
+  //     console.log('Deleting these old documents:', toDelete);
+  //   const ids = toDelete.map(doc => doc._id);
+  //   if (ids.length > 0) {
+  //     await collection.deleteMany({ _id: { $in: ids } });
+  //     console.log(`Deleted ${ids.length} old documents to maintain max limit of ${MAX_DOCS}`);
+  //   }
+  // }
+  // Run periodically
+//setInterval(runCleanup, CLEANUP_INTERVAL_MS);
+//runCleanup(); // Run immediately on startup
 
   return dataToInsert;
 }
@@ -210,7 +214,59 @@ async function autoFetchAndProcess() {
   }
 }
 
+
+
 autoFetchAndProcess();
 
 setInterval(autoFetchAndProcess, 5000); // Run every 10 second (15000 ms)
+
+
+
+// const MAX_DOCS = 10000;
+// const RETENTION_MS = 24 * 60 * 60 * 1000; // Keep data for last 24 hours
+// const CLEANUP_INTERVAL_MS = 10 * 60 * 1000; // Run every 10 minutes
+
+// let isCleaning = false;
+
+// async function runCleanup() {
+//   if (isCleaning) return; // prevent overlapping cleanups
+//   isCleaning = true;
+
+  
+//   try {
+//     const collection = db.collection('date');
+
+//     const now = Date.now();
+
+//     // 1. Time-based deletion (optional)
+//     const timeThreshold = new Date(now - RETENTION_MS);
+//     const timeResult = await collection.deleteMany({ timestamp: { $lt: timeThreshold } });
+//     console.log(`Time-based cleanup: Deleted ${timeResult.deletedCount} documents older than 24 hours`);
+
+//     // 2. Count-based deletion
+//     const count = await collection.countDocuments();
+//     if (count > MAX_DOCS) {
+//       const toDelete = await collection.find({})
+//         .sort({ timestamp: 1 }) // oldest first
+//         .limit(count - MAX_DOCS)
+//         .project({ _id: 1 }) // only fetch _id for efficiency
+//         .toArray();
+
+//       const ids = toDelete.map(doc => doc._id);
+//       if (ids.length > 0) {
+//         const countResult = await collection.deleteMany({ _id: { $in: ids } });
+//         console.log(`Count-based cleanup: Deleted ${countResult.deletedCount} old documents to maintain max of ${MAX_DOCS}`);
+//       }
+//     }
+
+//     // 3. (Optional) Archival logic here before deletion
+//     // e.g., save to S3, another collection, etc.
+//   } catch (err) {
+//     console.error("Cleanup error:", err);
+//   } finally {
+//     await client.close();
+//     isCleaning = false;
+//   }
+// }
+
 

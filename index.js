@@ -7,7 +7,18 @@ const port = process.env.PORT|| 5000;
 const Approuter = require('./application');
 app.use(cors()); 
 app.use(express.json());
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} took ${duration}ms`);
+  });
+  next();
+});
+
 app.use(Approuter);
+
+
 
 
 
